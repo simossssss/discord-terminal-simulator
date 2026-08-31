@@ -1,5 +1,5 @@
 This is a simple terminal simulator. It is made to simulate a Linux like terminal to discord.
-current support to windows bot hosts
+
 current commands:
 - !ls <- views all files in the current directory
 - !cd <- changes and shows the current directory
