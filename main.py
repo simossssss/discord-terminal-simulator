@@ -1,5 +1,5 @@
 import discord
-import os, pathlib,subprocess
+import os, pathlib,subprocess, time
 from discord.ext import commands
 
 intents = discord.Intents.default()
@@ -11,7 +11,7 @@ dire = os.path.dirname(__file__)
 @bot.command()
 async def imgview(ctx, img):
         global dire
-        
+
         if (img[-4:] == ".png" or img[-4:] == ".jpg" or img[-4:] == ".gif")and pathlib.Path(dire + "\\" + img).is_file():
             picture = discord.File(os.path.join(dire, img))
             await ctx.send(file=discord.File(dire+"\\"+img))
@@ -36,14 +36,16 @@ async def ls(ctx):
     global dire
     items = os.listdir(dire)
     message = ""
-
-    for i, item in enumerate(items):
-        if i == 0:
-            message += f"┌ {item}\n"
-        elif i == len(items) - 1:
-            message += f"└ {item}\n"
-        else:
-            message += f"├ {item}\n"
+    if len(items)==1:
+        message=f"**-** {items[0]}\n"
+    else:
+        for i, item in enumerate(items):
+            if i == 0:
+                message += f"┌ {item}\n"
+            elif i == len(items) - 1:
+                message += f"└ {item}\n"
+            else:
+                message += f"├ {item}\n"
 
     while message:
         await ctx.send(message[:1900])
@@ -101,5 +103,22 @@ async def rmdir(ctx, name):
 
     else:
         await ctx.send("derectory is not empty")
+
+@bot.command()
+async def getfile(ctx, name):
+        global dire
+        items = os.listdir(dire)
+        flag=False
+
+        for i in items:
+            if i == name:
+                await ctx.send("getting file")
+                time.sleep(0.2)
+                await ctx.send(file=discord.File(dire+"\\"+name))
+                flag=True
+                break
+        
+        if flag==False:
+            await ctx.send("file doesn't exist")
 
 bot.run('Your discord bot token here')
