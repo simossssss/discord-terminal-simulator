@@ -6,15 +6,16 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
-
 dire = os.path.dirname(__file__)
 
 @bot.command()
 async def imgview(ctx, img):
         global dire
+        
         if (img[-4:] == ".png" or img[-4:] == ".jpg" or img[-4:] == ".gif")and pathlib.Path(dire + "\\" + img).is_file():
             picture = discord.File(os.path.join(dire, img))
             await ctx.send(file=discord.File(dire+"\\"+img))
+        
         else:
             await ctx.send("not an image file")
 
@@ -22,6 +23,7 @@ async def imgview(ctx, img):
 async def imgall(ctx):
         global dire
         items = os.listdir(dire)
+
         for i in items:
             if i.lower().endswith((".png", ".jpg", ".gif")):
                 await ctx.send(file=discord.File(dire+"\\"+i))
@@ -55,6 +57,7 @@ async def cd(ctx, arg):
 
     if not os.path.isdir(new_dir):
         await ctx.send("Invalid path name")
+
     else:
         dire = new_dir
         await ctx.send(dire)
@@ -69,11 +72,13 @@ async def mkdir(ctx, name):
     global dire
     items = os.listdir(dire)
     flag=False
+
     for i in items:
         if i == name:
             await ctx.send("directory already exists")
             flag=True
             break
+    
     if flag==False:
         os.makedirs(dire+"\\"+name)
         await ctx.send("directory created")
@@ -82,6 +87,7 @@ async def mkdir(ctx, name):
 async def rmdir(ctx, name):
     global dire
     items = os.listdir(dire)
+
     if not items:
         flag=False
         for i in items:
@@ -92,6 +98,7 @@ async def rmdir(ctx, name):
                 break
         if flag==False:
             await ctx.send("directory doesnt exists")
+
     else:
         await ctx.send("derectory is not empty")
 
