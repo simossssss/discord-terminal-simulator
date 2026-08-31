@@ -8,3 +8,4 @@ current commands:
 - !pwd <- returns the current directory path
 - !mkdir <- creates a new specified directory if the name doesn't exists
 - !rmdir <- removes a specified directory if it's empty and exists
+- !getfile <- makes the bot return a file into the discord chat
