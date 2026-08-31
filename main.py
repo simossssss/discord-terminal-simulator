@@ -31,8 +31,8 @@ async def imgall(ctx):
 
 @bot.command()
 async def ls(ctx):
+    global dire
     items = os.listdir(dire)
-
     message = ""
 
     for i, item in enumerate(items):
@@ -58,4 +58,41 @@ async def cd(ctx, arg):
     else:
         dire = new_dir
         await ctx.send(dire)
+
+@bot.command()
+async def pwd(ctx):
+    global dire
+    await ctx.send(dire)
+
+@bot.command()
+async def mkdir(ctx, name):
+    global dire
+    items = os.listdir(dire)
+    flag=False
+    for i in items:
+        if i == name:
+            await ctx.send("directory already exists")
+            flag=True
+            break
+    if flag==False:
+        os.makedirs(dire+"\\"+name)
+        await ctx.send("directory created")
+
+@bot.command()
+async def rmdir(ctx, name):
+    global dire
+    items = os.listdir(dire)
+    if not items:
+        flag=False
+        for i in items:
+            if i==name:
+                flag=True
+                os.rmdir(dire+"\\"+name)
+                await ctx.send("directory removed")
+                break
+        if flag==False:
+            await ctx.send("directory doesnt exists")
+    else:
+        await ctx.send("derectory is not empty")
+
 bot.run('Your discord bot token here')
