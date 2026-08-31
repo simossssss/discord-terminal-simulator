@@ -5,3 +5,6 @@ current commands:
 - !cd <- changes and shows the current directory
 - !imgview <- makes the bot send an img from the current directory
 - !imgall <- makes the bot send all the imgs from the current directory
+- !pwd <- returns the current directory path
+- !mkdir <- creates a new specified directory if the name doesn't exists
+- !rmdir <- removes a specified directory if it's empty and exists
