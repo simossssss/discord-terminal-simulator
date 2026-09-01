@@ -1,5 +1,5 @@
 import discord
-import os, pathlib,subprocess, time
+import os, pathlib, subprocess, time
 from discord.ext import commands
 
 intents = discord.Intents.default()
@@ -8,36 +8,50 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 dire = os.path.dirname(__file__)
 
+def get_path(path):
+    if os.path.isabs(path):
+        return os.path.abspath(path)
+    return os.path.abspath(os.path.join(dire, path))
+
+
 @bot.command()
 async def imgview(ctx, img):
-        global dire
+    global dire
 
-        if (img[-4:] == ".png" or img[-4:] == ".jpg" or img[-4:] == ".gif")and pathlib.Path(dire + "\\" + img).is_file():
-            picture = discord.File(os.path.join(dire, img))
-            await ctx.send(file=discord.File(dire+"\\"+img))
-        
-        else:
-            await ctx.send("not an image file")
+    path = get_path(img)
+
+    if img.lower().endswith((".png", ".jpg", ".gif")) and pathlib.Path(path).is_file():
+        await ctx.send(file=discord.File(path))
+    else:
+        await ctx.send("not an image file")
+
 
 @bot.command()
 async def imgall(ctx):
-        global dire
-        items = os.listdir(dire)
+    global dire
 
-        for i in items:
-            if i.lower().endswith((".png", ".jpg", ".gif")):
-                await ctx.send(file=discord.File(dire+"\\"+i))
-                print("done")
-            else:
-                print("problem")
+    items = os.listdir(dire)
+
+    for i in items:
+        path = get_path(i)
+
+        if i.lower().endswith((".png", ".jpg", ".gif")):
+            await ctx.send(file=discord.File(path))
+            print("done")
+        else:
+            print("problem")
+
 
 @bot.command()
 async def ls(ctx):
     global dire
+
     items = os.listdir(dire)
     message = ""
-    if len(items)==1:
-        message=f"**-** {items[0]}\n"
+
+    if len(items) == 1:
+        message = f"**-** {items[0]}\n"
+
     else:
         for i, item in enumerate(items):
             if i == 0:
@@ -51,11 +65,12 @@ async def ls(ctx):
         await ctx.send(message[:1900])
         message = message[1900:]
 
+
 @bot.command()
 async def cd(ctx, arg):
     global dire
 
-    new_dir = os.path.abspath(os.path.join(dire, arg))
+    new_dir = get_path(arg)
 
     if not os.path.isdir(new_dir):
         await ctx.send("Invalid path name")
@@ -64,61 +79,66 @@ async def cd(ctx, arg):
         dire = new_dir
         await ctx.send(dire)
 
+
 @bot.command()
 async def pwd(ctx):
     global dire
+
     await ctx.send(dire)
+
 
 @bot.command()
 async def mkdir(ctx, name):
-    global dire
-    items = os.listdir(dire)
-    flag=False
 
-    for i in items:
-        if i == name:
-            await ctx.send("directory already exists")
-            flag=True
-            break
-    
-    if flag==False:
-        os.makedirs(dire+"\\"+name)
+    path = get_path(name)
+
+    if os.path.exists(path):
+        await ctx.send("directory already exists")
+
+    else:
+        os.makedirs(path)
         await ctx.send("directory created")
+
 
 @bot.command()
 async def rmdir(ctx, name):
-    global dire
-    items = os.listdir(dire)
 
-    if not items:
-        flag=False
-        for i in items:
-            if i==name:
-                flag=True
-                os.rmdir(dire+"\\"+name)
-                await ctx.send("directory removed")
-                break
-        if flag==False:
-            await ctx.send("directory doesnt exists")
+    path = get_path(name)
+
+    if not os.path.isdir(path):
+        await ctx.send("directory doesn't exist")
+        return
+
+    if os.listdir(path):
+        await ctx.send("directory is not empty")
 
     else:
-        await ctx.send("derectory is not empty")
+        os.rmdir(path)
+        await ctx.send("directory removed")
+
 
 @bot.command()
 async def getfile(ctx, name):
-        global dire
-        items = os.listdir(dire)
-        flag=False
+    path = get_path(name)
 
-        for i in items:
-            if i == name:
-                await ctx.send("getting file")
-                time.sleep(0.2)
-                await ctx.send(file=discord.File(dire+"\\"+name))
-                flag=True
-                break
-        
-        if flag==False:
-            await ctx.send("file doesn't exist")
+    if os.path.isfile(path):
+        await ctx.send("getting file")
+        time.sleep(0.2)
+        await ctx.send(file=discord.File(path))
+
+    else:
+        await ctx.send("file doesn't exist")
+
+
+@bot.command()
+async def rm(ctx, name):
+    path = get_path(name)
+
+    if os.path.isfile(path):
+        os.remove(path)
+        await ctx.send("file removed")
+
+    else:
+        await ctx.send("file doesn't exist")
 
 bot.run('Your discord bot token here')
