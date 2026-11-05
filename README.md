@@ -1,4 +1,4 @@
-This is a simple terminal simulator. It is made to simulate a Linux like terminal to discord.
+This is a simple terminal simulator. It is made to simulate a Linux like terminal to discord chats.
 
 current commands:
 - !ls <- views all files in the current directory
